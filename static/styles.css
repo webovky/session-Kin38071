@@ -5,3 +5,18 @@ h1 {
 p {
     color: rgb(236, 98, 33);
 }
+
+.pass {
+    color: green
+}
+
+.err {
+    color: red
+}
+
+.message {
+    width: 50%;
+    border: solid black 2px;
+    padding: 1em;
+    background-color: lightgray;
+}
