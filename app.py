@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 """
@@ -16,7 +17,6 @@ def index():
 
 @app.route("/abc/", methods=["GET"])
 def abc():
-    session['user'] = 'karel'
     try:
         x = request.args.get("x") 
         y = request.args.get("y")
@@ -50,7 +50,11 @@ def banany(parametr):
 
 @app.route("/kvetak/")
 def kvetak():
-    return render_template("kvetak.html.j2")
+    if 'user' in session:
+        return render_template("kvetak.html.j2")
+    else:
+        flash(f'Pro zobrazení této stránky ({request.path}) je nutné se přihlásit', 'err')
+        return redirect(url_for('login', next=request.path))
 
 @app.route("/login/", methods=['GET'])
 def login():
@@ -62,11 +66,21 @@ def login():
 def login_post():
     login = request.form.get('login')
     passwd = request.form.get('passwd')
-    print(login, passwd)
-    if login == 'karel' and passwd == 'abcdefg' :
+    next = request.args.get('next')
+    if passwd == 'lokomotiva' :
         session['user'] = login
         flash("úspěšné přihlášení", 'pass')
+        if next:
+            return redirect(next)
     else:
         flash("neplatné přihlašovací údaje", 'err')
+    if next:
+        return redirect(url_for("login", next=next))
+    else:
+        return redirect(url_for('login'))
 
+@app.route("/logout/")
+def logout():
+    session.pop('user', None)
+    flash("Právě jsi se odhlásil", 'pass')
     return redirect(url_for('login'))

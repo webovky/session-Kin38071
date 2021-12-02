@@ -20,6 +20,16 @@
     <li><a href="{{ url_for('login') }}">Login</a></li>
 </ul>
 
+<p class="login">
+{% if 'user' in session  %}
+Jsi přihlášen jako <strong>{{ session.get('user') }}</strong>.
+<a href="{{ url_for('logout') }}">Odhlásit</a>
+{% else %}
+Nejsi přihlášen.
+<a href="{{ url_for('login') }}">Přihlásit</a>
+{% endif %}
+</p>
+
 {% for category, message in get_flashed_messages(with_categories=true) %}
     <p class="message {{ category }}">{{ message }}</p>
 {% endfor %}
